@@ -5,227 +5,391 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Shoulder — Interactive Companion</title>
     <style>
-        *{margin:0;padding:0;box-sizing:border-box}
-        body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#1a2a3a;color:#e8ecf0;min-height:100vh}
-        header{padding:1.25rem 1rem 1rem;text-align:center;border-bottom:3px solid #c0532a}
-        header h1{font-family:Georgia,"Times New Roman",serif;font-size:1.5rem;font-weight:700;color:#fff;margin-bottom:.25rem}
-        header p{font-size:.85rem;color:#8eaabd}
-        .tab-nav{display:flex;background:#15222e;border-bottom:1px solid #2a3a4a;overflow-x:auto;-webkit-overflow-scrolling:touch}
-        .tab-btn{flex:1;min-width:0;padding:.7rem .35rem;background:none;border:none;color:#6a8a9d;font-size:.7rem;font-weight:600;text-align:center;cursor:pointer;border-bottom:3px solid transparent;transition:all .2s;white-space:nowrap}
-        .tab-btn.active{color:#fff;border-bottom-color:#c0532a;background:rgba(192,83,42,.1)}
-        .tab-btn:hover{color:#b0c8d8}
-        .tab-panel{display:none}.tab-panel.active{display:block}
-        .model-container{display:flex;flex-direction:column;padding:.75rem}
-        .model-label{font-size:.8rem;color:#8eaabd;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.5rem}
-        .embed-wrapper{min-height:calc(100vh - 220px);border-radius:8px;overflow:hidden;background:#0d1b2a}
-        .embed-wrapper iframe{width:100%;height:100%;min-height:calc(100vh - 220px);display:block}
-        .attribution{text-align:center;padding:.5rem;font-size:.7rem;color:#5a7a8a}
-        .attribution a{color:#5a9ab5;text-decoration:none}
-        .tips{padding:.5rem 1rem;text-align:center}.tips p{font-size:.75rem;color:#6a8a9d}
-        .content-panel{padding:1rem;max-width:960px;margin:0 auto}
-        .download-bar{display:flex;justify-content:center;padding:.75rem 1rem;margin-bottom:.5rem}
-        .download-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:#c0532a;color:#fff;text-decoration:none;border-radius:6px;font-size:.8rem;font-weight:600;transition:background .2s}
-        .download-btn:hover{background:#a8441f}
-        .download-btn svg{width:16px;height:16px}
-        .section-title{font-family:Georgia,"Times New Roman",serif;font-size:1.05rem;color:#4db8c7;margin:1.25rem 0 .5rem;padding-bottom:.25rem;border-bottom:1px solid #2a3a4a}
-        .section-title:first-child{margin-top:0}
-        .table-wrapper{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:.5rem 0 1rem;border-radius:6px;border:1px solid #2a3a4a}
-        table{width:100%;border-collapse:collapse;font-size:.73rem;min-width:700px}
-        thead th{background:#1e3448;color:#fff;font-weight:600;padding:.45rem;text-align:left;position:sticky;top:0}
-        tbody td{padding:.4rem .45rem;border-top:1px solid #2a3a4a;vertical-align:top;line-height:1.4}
-        tbody tr:nth-child(odd){background:#1a2a3a}tbody tr:nth-child(even){background:#15222e}
-        td.mn{font-weight:700;white-space:nowrap;color:#c0d0dd}
-        .mnemonic{background:#15222e;border-left:3px solid #c0532a;padding:.6rem .8rem;margin:.5rem 0;font-size:.82rem;border-radius:0 4px 4px 0}
-        .clinical-card{background:#15222e;border-radius:8px;padding:1rem;margin-bottom:1rem;border:1px solid #2a3a4a}
-        .clinical-card h3{color:#c0532a;font-size:.95rem;margin-bottom:.6rem}
-        .clinical-card p{font-size:.82rem;line-height:1.5;color:#c0d0dd;margin-bottom:.5rem}
-        .clinical-card p:last-child{margin-bottom:0}
-        .clinical-card strong{color:#8eaabd}
-        .lt{display:inline-block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;padding:.15rem .4rem;border-radius:3px;margin-bottom:.3rem}
-        .la{background:#1e3448;color:#4db8c7}.lm{background:#2a1e14;color:#c0532a}.lp{background:#1e2a14;color:#7ab85a}.lc{background:#2a1e2a;color:#b07ac0}
-        .grade-list{margin:.3rem 0 .5rem}
-        .grade-item{padding:.3rem 0 .3rem .8rem;border-left:2px solid #2a3a4a;margin-bottom:.3rem;font-size:.82rem;color:#c0d0dd;line-height:1.4}
-        /* Practice questions */
-        .q-card{background:#15222e;border-radius:8px;padding:1rem;margin-bottom:1rem;border:1px solid #2a3a4a}
-        .q-card h4{color:#fff;font-size:.88rem;margin-bottom:.6rem;line-height:1.4}
-        .q-card .q-num{color:#c0532a;font-weight:700}
-        .opt-btn{display:block;width:100%;text-align:left;padding:.5rem .75rem;margin:.3rem 0;background:#1a2a3a;border:1px solid #2a3a4a;border-radius:5px;color:#c0d0dd;font-size:.82rem;cursor:pointer;transition:all .15s;line-height:1.4}
-        .opt-btn:hover{background:#1e3448;border-color:#4db8c7}
-        .opt-btn.correct{background:#1a3a2a;border-color:#4db87a;color:#7ae8a0}
-        .opt-btn.wrong{background:#3a1a1a;border-color:#c0532a;color:#e88a7a}
-        .opt-btn.reveal{background:#1e3448;border-color:#2a3a4a;color:#6a8a9d}
-        .explanation{display:none;margin-top:.6rem;padding:.6rem;background:#1a2a3a;border-left:3px solid #4db8c7;border-radius:0 4px 4px 0;font-size:.8rem;color:#8eaabd;line-height:1.5}
-        .explanation.show{display:block}
-        .score-bar{text-align:center;padding:.75rem;background:#15222e;border-radius:8px;margin-bottom:1rem;border:1px solid #2a3a4a}
-        .score-bar span{color:#4db8c7;font-weight:700;font-size:1.1rem}
-        .reset-btn{display:inline-block;margin-top:.5rem;padding:.4rem 1rem;background:#2a3a4a;color:#8eaabd;border:none;border-radius:4px;cursor:pointer;font-size:.8rem}
-        .reset-btn:hover{background:#3a4a5a}
-        footer{text-align:center;padding:1rem;font-size:.7rem;color:#4a6070;border-top:1px solid #2a3a4a;margin-top:1rem}
-        @media(min-width:768px){header h1{font-size:2rem}.tab-btn{font-size:.8rem}table{font-size:.8rem}}
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1a2a3a; color: #e8ecf0; min-height: 100vh; }
+        header { padding: 1.25rem 1rem 1rem; text-align: center; border-bottom: 3px solid #c0532a; }
+        header h1 { font-family: Georgia, "Times New Roman", serif; font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+        header p { font-size: 0.85rem; color: #8eaabd; }
+        .tab-nav { display: flex; background: #15222e; border-bottom: 1px solid #2a3a4a; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .tab-btn { flex: 1; min-width: 0; padding: 0.75rem 0.3rem; background: none; border: none; color: #6a8a9d; font-size: 0.7rem; font-weight: 600; text-align: center; cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; white-space: nowrap; }
+        .tab-btn.active { color: #fff; border-bottom-color: #c0532a; background: rgba(192,83,42,0.1); }
+        .tab-btn:hover { color: #b0c8d8; }
+        .tab-panel { display: none; }
+        .tab-panel.active { display: block; }
+        .model-container { display: flex; flex-direction: column; padding: 0.75rem; }
+        .model-label { font-size: 0.8rem; color: #8eaabd; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem; }
+        .embed-wrapper { min-height: calc(100vh - 220px); border-radius: 8px; overflow: hidden; background: #0d1b2a; }
+        .embed-wrapper iframe { width: 100%; height: 100%; min-height: calc(100vh - 220px); display: block; }
+        .attribution { text-align: center; padding: 0.5rem; font-size: 0.7rem; color: #5a7a8a; }
+        .attribution a { color: #5a9ab5; text-decoration: none; }
+        .tips { padding: 0.5rem 1rem; text-align: center; }
+        .tips p { font-size: 0.75rem; color: #6a8a9d; }
+        .content-panel { padding: 1rem; max-width: 900px; margin: 0 auto; }
+        .download-bar { display: flex; justify-content: center; padding: 0.75rem 1rem; margin-bottom: 0.5rem; }
+        .download-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.6rem 1.2rem; background: #c0532a; color: #fff; text-decoration: none; border-radius: 6px; font-size: 0.8rem; font-weight: 600; transition: background 0.2s; }
+        .download-btn:hover { background: #a8441f; }
+        .download-btn svg { width: 16px; height: 16px; }
+        .section-title { font-family: Georgia, "Times New Roman", serif; font-size: 1.05rem; color: #4db8c7; margin: 1.25rem 0 0.5rem; padding-bottom: 0.25rem; border-bottom: 1px solid #2a3a4a; }
+        .section-title:first-child { margin-top: 0; }
+        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0.5rem 0 1rem; border-radius: 6px; border: 1px solid #2a3a4a; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.75rem; min-width: 700px; }
+        thead th { background: #1e3448; color: #fff; font-weight: 600; padding: 0.45rem; text-align: left; position: sticky; top: 0; }
+        tbody td { padding: 0.4rem 0.45rem; border-top: 1px solid #2a3a4a; vertical-align: top; line-height: 1.35; }
+        tbody tr:nth-child(odd) { background: #1a2a3a; }
+        tbody tr:nth-child(even) { background: #15222e; }
+        td.mn { font-weight: 700; white-space: nowrap; color: #c0d0dd; }
+        .mnemonic { background: #15222e; border-left: 3px solid #c0532a; padding: 0.6rem 0.8rem; margin: 0.5rem 0; font-size: 0.82rem; border-radius: 0 4px 4px 0; }
+        .clinical-card { background: #15222e; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #2a3a4a; }
+        .clinical-card h3 { color: #c0532a; font-size: 0.95rem; margin-bottom: 0.6rem; }
+        .clinical-card p { font-size: 0.82rem; line-height: 1.5; color: #c0d0dd; margin-bottom: 0.5rem; }
+        .clinical-card p:last-child { margin-bottom: 0; }
+        .clinical-card strong { color: #8eaabd; }
+        .lt { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; padding: 0.15rem 0.4rem; border-radius: 3px; margin-bottom: 0.3rem; }
+        .la { background: #1e3448; color: #4db8c7; }
+        .lm { background: #2a1e14; color: #c0532a; }
+        .lp { background: #1e2a14; color: #7ab85a; }
+        .lc { background: #2a1e2a; color: #b07ac0; }
+        .grade-list { margin: 0.3rem 0 0.5rem; }
+        .grade-item { padding: 0.3rem 0 0.3rem 0.8rem; border-left: 2px solid #2a3a4a; margin-bottom: 0.3rem; font-size: 0.82rem; color: #c0d0dd; line-height: 1.4; }
+        /* ── Practice questions ── */
+        .q-card { background: #15222e; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; border: 1px solid #2a3a4a; }
+        .q-num { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: #4db8c7; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+        .q-stem { font-size: 0.88rem; line-height: 1.55; color: #e0e8f0; margin-bottom: 0.6rem; }
+        .q-options { list-style: none; padding: 0; margin-bottom: 0.6rem; }
+        .q-options li { padding: 0.5rem 0.7rem; margin-bottom: 0.35rem; background: #1a2a3a; border: 1px solid #2a3a4a; border-radius: 5px; font-size: 0.82rem; color: #c0d0dd; cursor: pointer; transition: all 0.2s; }
+        .q-options li:hover { border-color: #4a6a7a; background: #1e3040; }
+        .q-options li.selected-correct { background: #1a3a2a; border-color: #3a8a5a; color: #7acf9a; }
+        .q-options li.selected-wrong { background: #3a1a1a; border-color: #8a3a3a; color: #cf7a7a; }
+        .q-options li.show-correct { background: #1a3a2a; border-color: #3a8a5a; color: #7acf9a; }
+        .q-options li.disabled { pointer-events: none; opacity: 0.7; }
+        .q-explanation { display: none; padding: 0.7rem; background: #1a2a3a; border-radius: 5px; font-size: 0.82rem; line-height: 1.5; color: #a0b8c8; border-left: 3px solid #4db8c7; }
+        .q-explanation.visible { display: block; }
+        .q-score { text-align: center; padding: 1rem; background: #15222e; border-radius: 8px; border: 1px solid #2a3a4a; margin-bottom: 1rem; }
+        .q-score .score-num { font-size: 2rem; font-weight: 700; color: #4db8c7; }
+        .q-score .score-label { font-size: 0.8rem; color: #6a8a9d; }
+        .reset-btn { display: block; margin: 1rem auto; padding: 0.6rem 1.5rem; background: #2a3a4a; color: #8eaabd; border: 1px solid #3a4a5a; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: all 0.2s; }
+        .reset-btn:hover { background: #3a4a5a; color: #fff; }
+        footer { text-align: center; padding: 1rem; font-size: 0.7rem; color: #4a6070; border-top: 1px solid #2a3a4a; margin-top: 1rem; }
+        @media (min-width: 768px) { header h1 { font-size: 2rem; } .tab-btn { font-size: 0.8rem; } table { font-size: 0.8rem; } }
     </style>
 </head>
 <body>
-<header><h1>The Shoulder</h1><p>Structure, Function, and Clinical Relevance</p></header>
-<nav class="tab-nav">
-    <button class="tab-btn active" onclick="showTab('model',this)">3D Model</button>
-    <button class="tab-btn" onclick="showTab('muscles',this)">Muscles</button>
-    <button class="tab-btn" onclick="showTab('clinical',this)">Clinical</button>
-    <button class="tab-btn" onclick="showTab('quiz',this)">Practice</button>
-</nav>
+    <header>
+        <h1>The Shoulder</h1>
+        <p>Structure, Function, and Clinical Relevance</p>
+    </header>
+    <nav class="tab-nav">
+        <button class="tab-btn active" onclick="showTab('model', this)">3D Model</button>
+        <button class="tab-btn" onclick="showTab('muscles', this)">Muscles</button>
+        <button class="tab-btn" onclick="showTab('clinical', this)">Clinical</button>
+        <button class="tab-btn" onclick="showTab('practice', this)">Practice</button>
+    </nav>
 
-<!-- 3D MODEL -->
-<div id="tab-model" class="tab-panel active">
-    <div class="model-container">
-        <div class="model-label">Bony Elements of the Glenohumeral Joint</div>
-        <div class="embed-wrapper">
-            <iframe title="Bony Elements of the Glenohumeral Joint" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/577fc05f069046d6a5759633587d5119/embed?ui_theme=dark"></iframe>
+    <!-- ═══ 3D MODEL ═══ -->
+    <div id="tab-model" class="tab-panel active">
+        <div class="model-container">
+            <div class="model-label">Bony Elements of the Glenohumeral Joint</div>
+            <div class="embed-wrapper">
+                <iframe title="Bony Elements of the Glenohumeral Joint" frameborder="0" allowfullscreen mozallowfullscreen="true" webkitallowfullscreen="true" allow="autoplay; fullscreen; xr-spatial-tracking" xr-spatial-tracking execution-while-out-of-viewport execution-while-not-rendered web-share src="https://sketchfab.com/models/577fc05f069046d6a5759633587d5119/embed?ui_theme=dark"></iframe>
+            </div>
+            <div class="attribution">Model: <a href="https://sketchfab.com/3d-models/bony-elements-of-the-glenohumeral-joint-577fc05f069046d6a5759633587d5119" target="_blank" rel="nofollow">Bony Elements of the Glenohumeral Joint</a> by <a href="https://sketchfab.com/docjana" target="_blank" rel="nofollow">Anatomy by Doctor Jana</a> on <a href="https://sketchfab.com" target="_blank" rel="nofollow">Sketchfab</a></div>
         </div>
-        <div class="attribution">Model: <a href="https://sketchfab.com/3d-models/bony-elements-of-the-glenohumeral-joint-577fc05f069046d6a5759633587d5119" target="_blank" rel="nofollow">Bony Elements of the Glenohumeral Joint</a> by <a href="https://sketchfab.com/docjana" target="_blank" rel="nofollow">Anatomy by Doctor Jana</a> on <a href="https://sketchfab.com" target="_blank" rel="nofollow">Sketchfab</a></div>
+        <div class="tips"><p>Pinch to zoom &middot; Drag to rotate &middot; Two-finger drag to pan</p></div>
     </div>
-    <div class="tips"><p>Pinch to zoom · Drag to rotate · Two-finger drag to pan</p></div>
-</div>
 
-<!-- MUSCLE REFERENCE -->
-<div id="tab-muscles" class="tab-panel">
-    <div class="download-bar"><a href="Shoulder_Muscle_Reference.pdf" download class="download-btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>Download PDF</a></div>
-    <div class="content-panel">
-        <h2 class="section-title">Anchoring Muscles of the Shoulder</h2>
-        <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Attachments</th><th>Innervation</th><th>Blood Supply</th><th>Function</th></tr></thead><tbody>
-            <tr><td class="mn">Trapezius</td><td>Spinous processes, nuchal line, skull. <b>To:</b> spine of scapula and clavicle</td><td>Spinal accessory n. (CN XI)</td><td>Transverse cervical a. (superficial branch)</td><td>Elevate (upper fibers); retract (middle fibers); depress (inferior fibers); upper + lower fibers elevate glenoid fossa with serratus anterior for full abduction</td></tr>
-            <tr><td class="mn">Latissimus dorsi</td><td>Spinous processes T7–L5 via thoracolumbar fascia and iliac crest. <b>To:</b> intertubercular sulcus of humerus</td><td>Thoracodorsal n. (C6, C7, C8)</td><td>Thoracodorsal a. (branch of subscapular a.)</td><td>Extend, adduct, and medially rotate humerus</td></tr>
-            <tr><td class="mn">Rhomboid minor</td><td>Spinous processes C7–T1. <b>To:</b> spine of scapula</td><td>Dorsal scapular n. (C5, C6)</td><td>Transverse cervical a. (deep branch)</td><td>Retract/rotate scapula (depress glenoid fossa)</td></tr>
-            <tr><td class="mn">Rhomboid major</td><td>Spinous processes T2–T5. <b>To:</b> inferomedial border of scapula below spine</td><td>Dorsal scapular n. (C5, C6)</td><td>Transverse cervical a. (deep branch)</td><td>Retract/rotate scapula (depress glenoid fossa)</td></tr>
-            <tr><td class="mn">Teres major</td><td>Inferior angle of scapula. <b>To:</b> medial lip of intertubercular sulcus of humerus</td><td>Lower subscapular n. (C5, C6)</td><td>Circumflex scapular a. (branch of subscapular a.)</td><td>Adducts and medially rotates humerus</td></tr>
-            <tr><td class="mn">Deltoid</td><td>Clavicle, acromion, spine of scapula. <b>To:</b> deltoid tuberosity (lateral, halfway down)</td><td>Axillary n. (C5, C6)</td><td>Posterior circumflex humeral a.; deltoid branch of thoracoacromial trunk</td><td>Clavicular: flex/medially rotate. Acromial: abduct 15°–120°. Spine: extend/laterally rotate. Clavicular + spinous assist adduction of abducted arm</td></tr>
-            <tr><td class="mn">Pectoralis major</td><td>Clavicular head: anterior medial 1/2 clavicle. Sternocostal head: sternum, costal cartilages 1–6. <b>To:</b> lateral lip of intertubercular sulcus</td><td>Lateral pectoral n. (C5, C6, C7); Medial pectoral n. (C8, T1)</td><td>Pectoral branch of thoracoacromial a., lateral thoracic a., intercostals, internal thoracic a.</td><td>Flex, adduct, medially rotate arm. Inferior fibers assist extension of flexed arm</td></tr>
-            <tr><td class="mn">Pectoralis minor</td><td>Anterior 3rd, 4th, 5th ribs. <b>To:</b> coracoid process</td><td>Medial pectoral n. (C8, T1)</td><td>Pectoral branch of thoracoacromial trunk, intercostals</td><td>Depress, protract, stabilize scapula</td></tr>
-            <tr><td class="mn">Serratus anterior</td><td>Upper 8 or 9 ribs. <b>To:</b> anterior scapula at medial border</td><td>Long thoracic n. (C5, C6, C7)</td><td>Lateral thoracic a., superior thoracic a., thoracodorsal a.</td><td>Protracts and stabilizes scapula; aids abduction by assisting scapular rotation (with trapezius)</td></tr>
-        </tbody></table></div>
+    <!-- ═══ MUSCLE REFERENCE ═══ -->
+    <div id="tab-muscles" class="tab-panel">
+        <div class="download-bar">
+            <a href="Shoulder_Muscle_Reference.pdf" download class="download-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                Download PDF
+            </a>
+        </div>
+        <div class="content-panel">
+            <h2 class="section-title">Muscles That Anchor the Scapula</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Innervation</th><th>Blood Supply</th><th>Action</th></tr></thead><tbody>
+                <tr><td class="mn">Trapezius</td><td>Occipital bone, nuchal ligament, spinous processes C7–T12</td><td>Lateral 1/3 clavicle, acromion, spine of scapula</td><td>Spinal accessory n. (CN XI)</td><td>Transverse cervical a.</td><td>Elevates, retracts, depresses, rotates scapula</td></tr>
+                <tr><td class="mn">Levator scapulae</td><td>Transverse processes C1–C4</td><td>Superior angle and medial border of scapula</td><td>Dorsal scapular n. (C5, C6); cervical nn. (C3, C4)</td><td>Dorsal scapular a.</td><td>Elevates scapula; rotates glenoid inferiorly</td></tr>
+                <tr><td class="mn">Rhomboid minor</td><td>Spinous processes C7–T1; nuchal ligament</td><td>Medial border at root of spine</td><td>Dorsal scapular n. (C5, C6)</td><td>Dorsal scapular a.</td><td>Retracts and elevates scapula</td></tr>
+                <tr><td class="mn">Rhomboid major</td><td>Spinous processes T2–T5</td><td>Medial border below spine</td><td>Dorsal scapular n. (C5, C6)</td><td>Dorsal scapular a.</td><td>Retracts and elevates scapula</td></tr>
+                <tr><td class="mn">Serratus anterior</td><td>External surfaces of ribs 1–8/9</td><td>Anterior surface of medial border of scapula</td><td>Long thoracic n. (C5, C6, C7)</td><td>Lateral thoracic a.</td><td>Protracts scapula; rotates glenoid superiorly (with trapezius); aids abduction at shoulder; holds scapula to thoracic wall</td></tr>
+                <tr><td class="mn">Pectoralis minor</td><td>Ribs 3–5 near costal cartilages</td><td>Coracoid process</td><td>Medial pectoral n. (C8, T1)</td><td>Thoracoacromial a.</td><td>Depresses and protracts scapula; stabilizes scapula</td></tr>
+            </tbody></table></div>
 
-        <h2 class="section-title">Rotator Cuff Muscles (SITS)</h2>
-        <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Attachments</th><th>Innervation</th><th>Blood Supply</th><th>Function</th></tr></thead><tbody>
-            <tr><td class="mn">Supraspinatus</td><td>Supraspinous fossa. <b>To:</b> superior facet of greater tubercle</td><td>Suprascapular n. (C5, C6)</td><td>Suprascapular a.</td><td>Initiation of abduction — first 15° at glenohumeral joint</td></tr>
-            <tr><td class="mn">Infraspinatus</td><td>Infraspinous fossa (medial). <b>To:</b> middle facet of greater tubercle</td><td>Suprascapular n. (C5, C6)</td><td>Suprascapular a.</td><td>Lateral rotation of arm at glenohumeral joint</td></tr>
-            <tr><td class="mn">Teres minor</td><td>Inferior scapula near lateral border. <b>To:</b> inferior facet of greater tubercle</td><td>Axillary n. (C5, C6)</td><td>Scapular circumflex a.; posterior humeral circumflex a.</td><td>Lateral rotation of arm at glenohumeral joint</td></tr>
-            <tr><td class="mn">Subscapularis</td><td>Medial 2/3 of subscapular fossa. <b>To:</b> lesser tubercle</td><td>Upper &amp; lower subscapular nn. (C5, C6)</td><td>Subscapular a.</td><td>Medial rotation of arm at glenohumeral joint</td></tr>
-        </tbody></table></div>
-        <div class="mnemonic"><strong>SITS:</strong> <strong>S</strong>upraspinatus, <strong>I</strong>nfraspinatus, <strong>T</strong>eres minor, <strong>S</strong>ubscapularis — three on greater tubercle, one (subscapularis) on lesser tubercle.</div>
+            <h2 class="section-title">Muscles Acting on the Glenohumeral Joint</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Innervation</th><th>Blood Supply</th><th>Action</th></tr></thead><tbody>
+                <tr><td class="mn">Pectoralis major</td><td>Clavicular head: medial 1/2 clavicle; Sternocostal head: sternum, upper costal cartilages, aponeurosis of ext. oblique</td><td>Lateral lip of intertubercular sulcus</td><td>Lateral pectoral n. (C5–C7); Medial pectoral n. (C8, T1)</td><td>Thoracoacromial a.; perforating branches of internal thoracic a.</td><td>Flexes, adducts, medially rotates arm; inferior fibers assist extension of the flexed arm</td></tr>
+                <tr><td class="mn">Latissimus dorsi</td><td>Spinous processes T7–L5, thoracolumbar fascia, iliac crest, lower 3–4 ribs</td><td>Floor of intertubercular sulcus</td><td>Thoracodorsal n. (C6, C7, C8)</td><td>Thoracodorsal a.</td><td>Extends, adducts, medially rotates arm</td></tr>
+                <tr><td class="mn">Deltoid</td><td>Clavicular head: lateral 1/3 clavicle; Acromial head: acromion; Spine head: spine of scapula</td><td>Deltoid tuberosity</td><td>Axillary n. (C5, C6)</td><td>Posterior circumflex humeral a.; deltoid branch of thoracoacromial a.</td><td>Clavicular: flexes, medially rotates; Acromial: abducts (~15–120°); Spine: extends, laterally rotates; Clavicular &amp; spine heads assist adduction of abducted arm</td></tr>
+                <tr><td class="mn">Teres major</td><td>Inferior angle and lower lateral border of scapula</td><td>Medial lip of intertubercular sulcus</td><td>Lower subscapular n. (C5, C6)</td><td>Subscapular a.</td><td>Adducts and medially rotates arm</td></tr>
+            </tbody></table></div>
 
-        <h2 class="section-title">Anterior Compartment — Musculocutaneous Nerve (C5, C6, C7)</h2>
-        <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Attachments</th><th>Innervation</th><th>Blood Supply</th><th>Function</th></tr></thead><tbody>
-            <tr><td class="mn">Biceps brachii</td><td>Long head: supraglenoid tubercle. Short head: coracoid process. <b>To:</b> radial tuberosity; bicipital aponeurosis</td><td>Musculocutaneous n. (C5, C6)</td><td>Brachial a.</td><td>Flexes forearm; supinates forearm; long head flexes arm</td></tr>
-            <tr><td class="mn">Brachialis</td><td>Distal 1/2 anterior humerus. <b>To:</b> coronoid process and tuberosity of ulna</td><td>Musculocutaneous n. (C5, C6)</td><td>Brachial a.; radial recurrent a.</td><td>Flexes forearm (primary flexor)</td></tr>
-            <tr><td class="mn">Coracobrachialis</td><td>Coracoid process. <b>To:</b> middle 1/3 medial surface of humerus</td><td>Musculocutaneous n. (C5, C6, C7)</td><td>Brachial a.</td><td>Flexes and adducts arm</td></tr>
-        </tbody></table></div>
+            <h2 class="section-title">Rotator Cuff Muscles (SITS)</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Innervation</th><th>Blood Supply</th><th>Action</th></tr></thead><tbody>
+                <tr><td class="mn">Supraspinatus</td><td>Supraspinous fossa</td><td>Superior facet of greater tubercle</td><td>Suprascapular n. (C5, C6)</td><td>Suprascapular a.</td><td>Initiates abduction (~first 15°); stabilizes humeral head</td></tr>
+                <tr><td class="mn">Infraspinatus</td><td>Infraspinous fossa</td><td>Middle facet of greater tubercle</td><td>Suprascapular n. (C5, C6)</td><td>Suprascapular a.; circumflex scapular a.</td><td>Laterally rotates arm; stabilizes humeral head</td></tr>
+                <tr><td class="mn">Teres minor</td><td>Upper 2/3 of lateral border of scapula</td><td>Inferior facet of greater tubercle</td><td>Axillary n. (C5, C6)</td><td>Circumflex scapular a.; posterior circumflex humeral a.</td><td>Laterally rotates arm; stabilizes humeral head</td></tr>
+                <tr><td class="mn">Subscapularis</td><td>Medial 2/3 of subscapular fossa</td><td>Lesser tubercle</td><td>Upper &amp; lower subscapular nn. (C5, C6)</td><td>Subscapular a.</td><td>Medially rotates arm; stabilizes humeral head</td></tr>
+            </tbody></table></div>
+            <div class="mnemonic"><strong>Mnemonic:</strong> <strong>S</strong>upraspinatus, <strong>I</strong>nfraspinatus, <strong>T</strong>eres minor, <strong>S</strong>ubscapularis — three insert on the greater tubercle, one (subscapularis) on the lesser tubercle.</div>
 
-        <h2 class="section-title">Posterior Compartment — Radial Nerve (C5–T1)</h2>
-        <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Attachments</th><th>Innervation</th><th>Blood Supply</th><th>Function</th></tr></thead><tbody>
-            <tr><td class="mn">Triceps brachii</td><td>Long head: infraglenoid tubercle. Lateral head: above radial groove. Medial head: below radial groove. <b>To:</b> olecranon</td><td>Radial n. (C6, C7, C8)</td><td>Profunda brachii a.</td><td>Extends forearm; long head extends and adducts arm</td></tr>
-            <tr><td class="mn">Anconeus</td><td>Lateral epicondyle. <b>To:</b> lateral olecranon and posterior ulna</td><td>Radial n. (C7, C8, T1)</td><td>Profunda brachii a.; interosseous recurrent a.</td><td>Assists extension; stabilizes elbow</td></tr>
-        </tbody></table></div>
+            <h2 class="section-title">Anterior Compartment — Musculocutaneous Nerve (C5, C6, C7)</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Innervation</th><th>Blood Supply</th><th>Action</th></tr></thead><tbody>
+                <tr><td class="mn">Biceps brachii</td><td>Long head: supraglenoid tubercle; Short head: coracoid process</td><td>Radial tuberosity; bicipital aponeurosis</td><td>Musculocutaneous n. (C5, C6)</td><td>Brachial a.</td><td>Flexes forearm; supinates forearm; long head flexes arm</td></tr>
+                <tr><td class="mn">Brachialis</td><td>Distal 1/2 anterior humerus</td><td>Coronoid process and tuberosity of ulna</td><td>Musculocutaneous n. (C5, C6)</td><td>Brachial a.; radial recurrent a.</td><td>Flexes forearm (primary flexor)</td></tr>
+                <tr><td class="mn">Coracobrachialis</td><td>Coracoid process</td><td>Middle 1/3 medial surface of humerus</td><td>Musculocutaneous n. (C5, C6, C7)</td><td>Brachial a.</td><td>Flexes and adducts arm</td></tr>
+            </tbody></table></div>
+
+            <h2 class="section-title">Posterior Compartment — Radial Nerve (C5–T1)</h2>
+            <div class="table-wrapper"><table><thead><tr><th>Muscle</th><th>Origin</th><th>Insertion</th><th>Innervation</th><th>Blood Supply</th><th>Action</th></tr></thead><tbody>
+                <tr><td class="mn">Triceps brachii</td><td>Long head: infraglenoid tubercle; Lateral head: above radial groove; Medial head: below radial groove</td><td>Olecranon process of ulna</td><td>Radial n. (C6, C7, C8)</td><td>Profunda brachii a.</td><td>Extends forearm; long head extends and adducts arm</td></tr>
+                <tr><td class="mn">Anconeus</td><td>Lateral epicondyle of humerus</td><td>Lateral olecranon and posterior ulna</td><td>Radial n. (C7, C8, T1)</td><td>Profunda brachii a.; interosseous recurrent a.</td><td>Assists forearm extension; stabilizes elbow</td></tr>
+            </tbody></table></div>
+        </div>
     </div>
-</div>
 
-<!-- CLINICAL CORRELATIONS -->
-<div id="tab-clinical" class="tab-panel">
-    <div class="download-bar"><a href="Shoulder_Clinical_Correlations.pdf" download class="download-btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>Download PDF</a></div>
-    <div class="content-panel">
-        <div class="clinical-card"><h3>1. Radial Nerve Injury and Wrist Drop</h3><span class="lt la">Anatomy</span><p>The radial nerve (C5–T1) arises from the posterior cord and courses through the triangular interval with the profunda brachii artery. It travels along the radial (spiral) groove on the posterior humeral shaft between the lateral and medial heads of the triceps before piercing the lateral intermuscular septum.</p><span class="lt lm">Mechanism</span><p>Humeral shaft fractures at or near the radial groove place the nerve at risk. Also injured in "Saturday night palsy" from prolonged arm compression.</p><span class="lt lp">Presentation</span><p>Loss of wrist and finger extension (wrist drop). Weakened grip. Sensory loss over posterior arm, posterior forearm, and dorsal hand.</p><span class="lt lc">Key concept</span><p>The radial nerve supplies all extensors. Its position in the radial groove makes it vulnerable. Knowing where the nerve is tells you what will be lost.</p></div>
-        <div class="clinical-card"><h3>2. Shoulder Separation (AC Joint Injury)</h3><span class="lt la">Anatomy</span><p>The AC joint is stabilized by the AC ligament (direct) and the coracoclavicular ligaments — conoid and trapezoid — which anchor clavicle to coracoid and resist superior displacement.</p><span class="lt lm">Mechanism</span><p>Direct blow or fall onto the point of the shoulder. Common in contact sports and cycling.</p><span class="lt lp">Grading</span><div class="grade-list"><div class="grade-item"><strong>Grade I:</strong> AC ligament sprain. Stretched but intact. No deformity.</div><div class="grade-item"><strong>Grade II:</strong> AC ligament torn, CC ligaments sprained but intact. Slight clavicular elevation.</div><div class="grade-item"><strong>Grade III:</strong> Both AC and CC ligaments torn. Visible "step-off" deformity.</div></div><span class="lt lc">Key concept</span><p>Grading follows the anatomy in sequence. Severity reflects how many stabilizers have failed.</p></div>
-        <div class="clinical-card"><h3>3. SLAP Tear (Superior Labrum Anterior to Posterior)</h3><span class="lt la">Anatomy</span><p>The glenoid labrum deepens the shallow glenoid fossa. The long head of biceps brachii attaches to the superior labrum — this is the SLAP tear site.</p><span class="lt lm">Mechanism</span><p>Repetitive overhead motions, FOOSH, or sudden traction. Biceps tendon transmits force to labral attachment.</p><span class="lt lp">Presentation</span><p>Deep shoulder pain with overhead activity. Catching sensation. Pain with Speed's and O'Brien's tests.</p><span class="lt lc">Key concept</span><p>Demonstrates the biceps–labrum functional link. The glenohumeral joint relies on soft tissue because the socket is shallow.</p></div>
-        <div class="clinical-card"><h3>4. Clavicle Fracture</h3><span class="lt la">Anatomy</span><p>The clavicle is the only bony connection between upper extremity and axial skeleton. Subcutaneous along its length. Middle third is thinnest.</p><span class="lt lm">Mechanism</span><p>Most common fracture of childhood (~10% of all fractures). Usually middle third. FOOSH or direct blow.</p><span class="lt lp">Presentation</span><p>Pain and deformity. Lateral fragment displaced inferiorly; medial fragment may be pulled superiorly by SCM.</p><span class="lt lc">Key concept</span><p>Subcutaneous position = no muscular padding. Curvature transition at middle third = mechanical weak point.</p></div>
+    <!-- ═══ CLINICAL CORRELATIONS ═══ -->
+    <div id="tab-clinical" class="tab-panel">
+        <div class="download-bar">
+            <a href="Shoulder_Clinical_Correlations.pdf" download class="download-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+                Download PDF
+            </a>
+        </div>
+        <div class="content-panel">
+            <div class="clinical-card">
+                <h3>1. Radial Nerve Injury and Wrist Drop</h3>
+                <span class="lt la">Anatomy</span>
+                <p>The radial nerve (C5–T1) arises from the posterior cord and courses through the triangular interval with the profunda brachii artery. It travels along the radial (spiral) groove on the posterior humeral shaft between the lateral and medial heads of the triceps before piercing the lateral intermuscular septum.</p>
+                <span class="lt lm">Mechanism</span>
+                <p>Humeral shaft fractures at or near the radial groove place the nerve at risk. Also the nerve injured in "Saturday night palsy" from prolonged compression of the arm against a hard surface.</p>
+                <span class="lt lp">Presentation</span>
+                <p>Loss of wrist and finger extension (wrist drop). Significantly weakened grip because wrist extensors normally stabilize the wrist during power grip. Sensory loss over the posterior arm, posterior forearm, and dorsal hand.</p>
+                <span class="lt lc">Key concept</span>
+                <p>The radial nerve supplies all extensors. Its position in the radial groove makes it vulnerable to humeral shaft fractures. Knowing where the nerve is tells you what will be lost.</p>
+            </div>
+            <div class="clinical-card">
+                <h3>2. Shoulder Separation (AC Joint Injury)</h3>
+                <span class="lt la">Anatomy</span>
+                <p>The AC joint is stabilized by the AC ligament (direct stabilization) and the coracoclavicular ligaments — the conoid and trapezoid — which anchor the clavicle to the coracoid process and resist superior displacement.</p>
+                <span class="lt lm">Mechanism</span>
+                <p>Direct blow or fall onto the point of the shoulder, driving the scapula inferiorly while the clavicle remains in place. Common in contact sports and cycling accidents.</p>
+                <span class="lt lp">Grading</span>
+                <div class="grade-list">
+                    <div class="grade-item"><strong>Grade I:</strong> AC ligament sprain. Stretched but intact. No visible deformity. Normal radiographs.</div>
+                    <div class="grade-item"><strong>Grade II:</strong> AC ligament torn, CC ligaments sprained but intact. Slight clavicular elevation.</div>
+                    <div class="grade-item"><strong>Grade III:</strong> Both AC and CC ligaments torn. Clavicle displaces superiorly — visible "step-off" deformity.</div>
+                </div>
+                <span class="lt lc">Key concept</span>
+                <p>The grading follows the anatomy in sequence. The severity reflects how many stabilizing structures have failed.</p>
+            </div>
+            <div class="clinical-card">
+                <h3>3. SLAP Tear (Superior Labrum Anterior to Posterior)</h3>
+                <span class="lt la">Anatomy</span>
+                <p>The glenoid labrum deepens the shallow glenoid fossa. The long head of the biceps brachii originates from the supraglenoid tubercle and attaches to the superior labrum — this is the site of a SLAP tear.</p>
+                <span class="lt lm">Mechanism</span>
+                <p>Repetitive overhead motions (throwing, swimming), fall on an outstretched hand (FOOSH), or sudden traction. The biceps tendon transmits force to the labral attachment, and excessive loading detaches the superior labrum.</p>
+                <span class="lt lp">Presentation</span>
+                <p>Deep shoulder pain with overhead activity. Catching or locking sensation. Pain with biceps-loading maneuvers (Speed's test, O'Brien's test). Confirmed with MR arthrography or arthroscopy.</p>
+                <span class="lt lc">Key concept</span>
+                <p>Demonstrates the functional link between the biceps tendon and the labrum. The glenohumeral joint relies on soft tissue for stability because the bony socket is shallow.</p>
+            </div>
+            <div class="clinical-card">
+                <h3>4. Clavicle Fracture</h3>
+                <span class="lt la">Anatomy</span>
+                <p>The clavicle is the only bony connection between the upper extremity and the axial skeleton. It is subcutaneous along its entire length. The middle third is the thinnest part and the junction between the two curvatures.</p>
+                <span class="lt lm">Mechanism</span>
+                <p>The most common fracture in childhood (~10% of all fractures). Most occur in the middle third. Caused by a fall on an outstretched hand or direct blow to the shoulder.</p>
+                <span class="lt lp">Presentation</span>
+                <p>Pain and visible deformity over the fracture site. The lateral fragment is displaced inferiorly by the weight of the limb; the medial fragment may be pulled superiorly by the sternocleidomastoid.</p>
+                <span class="lt lc">Key concept</span>
+                <p>The clavicle's subcutaneous position provides no muscular padding, and the curvature transition at the middle third creates a mechanical weak point.</p>
+            </div>
+        </div>
     </div>
-</div>
 
-<!-- PRACTICE QUESTIONS -->
-<div id="tab-quiz" class="tab-panel">
-    <div class="download-bar"><a href="Shoulder_Practice_Questions.pdf" download class="download-btn"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>Download PDF</a></div>
-    <div class="content-panel">
-        <div class="score-bar">Score: <span id="score">0</span> / <span id="total">10</span><br><button class="reset-btn" onclick="resetQuiz()">Reset</button></div>
-        <div id="quiz-container"></div>
+    <!-- ═══ PRACTICE QUESTIONS ═══ -->
+    <div id="tab-practice" class="tab-panel">
+        <div class="content-panel">
+            <div class="q-score">
+                <div class="score-num" id="score-display">0 / 10</div>
+                <div class="score-label">Tap an answer to check your understanding</div>
+            </div>
+
+            <div class="q-card" data-correct="2">
+                <div class="q-num">Question 1</div>
+                <div class="q-stem">A patient presents unable to abduct her arm from 0 to 15 degrees after a fall. Which muscle is most likely injured?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Deltoid (acromial head)</li>
+                    <li onclick="pick(this)">B. Infraspinatus</li>
+                    <li onclick="pick(this)" data-answer>C. Supraspinatus</li>
+                    <li onclick="pick(this)">D. Trapezius (upper fibers)</li>
+                </ul>
+                <div class="q-explanation">The supraspinatus initiates abduction for approximately the first 15 degrees. After that, the acromial head of the deltoid takes over as the primary abductor up to about 120 degrees. If the patient cannot start the movement at all, the supraspinatus is the likely culprit.</div>
+            </div>
+
+            <div class="q-card" data-correct="1">
+                <div class="q-num">Question 2</div>
+                <div class="q-stem">A construction worker falls from a ladder and fractures his humeral shaft at the level of the radial groove. On examination, he cannot extend his wrist. Which nerve is injured, and from which cord does it originate?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)" data-answer>A. Radial nerve; posterior cord</li>
+                    <li onclick="pick(this)">B. Musculocutaneous nerve; lateral cord</li>
+                    <li onclick="pick(this)">C. Ulnar nerve; medial cord</li>
+                    <li onclick="pick(this)">D. Axillary nerve; posterior cord</li>
+                </ul>
+                <div class="q-explanation">The radial nerve travels through the radial (spiral) groove on the posterior humerus and is the most commonly injured nerve in humeral shaft fractures. It arises from the posterior cord of the brachial plexus. Loss of wrist extension (wrist drop) is the hallmark presentation because the radial nerve supplies all extensor muscles of the forearm.</div>
+            </div>
+
+            <div class="q-card" data-correct="3">
+                <div class="q-num">Question 3</div>
+                <div class="q-stem">The musculocutaneous nerve is a defining feature of the anterior compartment of the arm. Which of the following is true about this nerve?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. It arises from the medial cord of the brachial plexus</li>
+                    <li onclick="pick(this)">B. It passes through the triceps brachii</li>
+                    <li onclick="pick(this)" data-answer>C. It pierces the coracobrachialis muscle</li>
+                    <li onclick="pick(this)">D. It terminates as the medial cutaneous nerve of the forearm</li>
+                </ul>
+                <div class="q-explanation">The musculocutaneous nerve arises from the lateral cord (C5, C6, C7) and pierces the coracobrachialis muscle — a useful landmark. It innervates all three anterior compartment muscles (biceps brachii, brachialis, coracobrachialis) and terminates as the lateral cutaneous nerve of the forearm.</div>
+            </div>
+
+            <div class="q-card" data-correct="4">
+                <div class="q-num">Question 4</div>
+                <div class="q-stem">A 22-year-old baseball pitcher presents with deep shoulder pain and a catching sensation during throwing. Imaging reveals damage to the superior glenoid labrum at the attachment of the long head of the biceps tendon. What is this injury called?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Rotator cuff tear</li>
+                    <li onclick="pick(this)">B. Hill-Sachs lesion</li>
+                    <li onclick="pick(this)">C. Bankart lesion</li>
+                    <li onclick="pick(this)" data-answer>D. SLAP tear</li>
+                </ul>
+                <div class="q-explanation">A SLAP (Superior Labrum Anterior to Posterior) tear occurs at the attachment point of the long head of the biceps tendon to the superior labrum. Repetitive overhead motions, like pitching, transmit force through the biceps tendon to the labral anchor. A Bankart lesion involves the inferior labrum (typically from anterior dislocation), and a Hill-Sachs lesion is a compression fracture of the humeral head.</div>
+            </div>
+
+            <div class="q-card" data-correct="2">
+                <div class="q-num">Question 5</div>
+                <div class="q-stem">A football player takes a direct hit to the point of his shoulder. Radiographs show superior displacement of the distal clavicle with complete disruption of both the AC and CC ligaments. What grade of shoulder separation is this?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Grade I</li>
+                    <li onclick="pick(this)">B. Grade II</li>
+                    <li onclick="pick(this)" data-answer>C. Grade III</li>
+                    <li onclick="pick(this)">D. Grade IV</li>
+                </ul>
+                <div class="q-explanation">Grade III involves complete tears of both the AC ligament and the CC ligaments (conoid and trapezoid). Because both sets of ligaments have failed, the clavicle is no longer anchored to the scapula and displaces superiorly, producing the visible "step-off" deformity. Grade I is an AC sprain only; Grade II is an AC tear with CC sprain.</div>
+            </div>
+
+            <div class="q-card" data-correct="2">
+                <div class="q-num">Question 6</div>
+                <div class="q-stem">A patient has weakness in lateral rotation at the shoulder after injuring the nerve that passes through the quadrangular space. Which muscles are affected?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Supraspinatus and infraspinatus</li>
+                    <li onclick="pick(this)" data-answer>B. Deltoid and teres minor</li>
+                    <li onclick="pick(this)">C. Subscapularis and teres major</li>
+                    <li onclick="pick(this)">D. Infraspinatus and teres minor</li>
+                </ul>
+                <div class="q-explanation">The axillary nerve (C5, C6) passes through the quadrangular space along with the posterior circumflex humeral artery. It innervates the deltoid and teres minor. The teres minor is a lateral rotator, and the deltoid (posterior head) also assists in lateral rotation. The suprascapular nerve, not the axillary, innervates the supraspinatus and infraspinatus.</div>
+            </div>
+
+            <div class="q-card" data-correct="3">
+                <div class="q-num">Question 7</div>
+                <div class="q-stem">You observe a muscle with fibers running from the medial 2/3 of the subscapular fossa to the lesser tubercle of the humerus. Based on its fiber orientation and attachment points, what is its primary action?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Lateral rotation of the arm</li>
+                    <li onclick="pick(this)">B. Abduction of the arm</li>
+                    <li onclick="pick(this)" data-answer>C. Medial rotation of the arm</li>
+                    <li onclick="pick(this)">D. Extension of the arm</li>
+                </ul>
+                <div class="q-explanation">This describes the subscapularis. Its fibers run from the anterior surface of the scapula (subscapular fossa) to the lesser tubercle, which sits on the anterior humerus. A muscle pulling from a posterior origin (back of scapula) to an anterior insertion would rotate the humerus medially. This is the principle of predicting function from fiber orientation, origin, and insertion.</div>
+            </div>
+
+            <div class="q-card" data-correct="1">
+                <div class="q-num">Question 8</div>
+                <div class="q-stem">During a surgical procedure in the posterior triangle of the neck, the long thoracic nerve is accidentally severed. What clinical finding would you expect?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)" data-answer>A. Winged scapula — medial border protrudes posteriorly</li>
+                    <li onclick="pick(this)">B. Shoulder drop — inability to shrug</li>
+                    <li onclick="pick(this)">C. Wrist drop — inability to extend the wrist</li>
+                    <li onclick="pick(this)">D. Loss of arm abduction</li>
+                </ul>
+                <div class="q-explanation">The long thoracic nerve (C5, C6, C7) innervates the serratus anterior, which holds the scapula against the thoracic wall and protracts it. When paralyzed, the medial border of the scapula protrudes posteriorly (winged scapula), especially when the patient pushes against a wall. The serratus anterior also assists in abduction by rotating the glenoid superiorly, so overhead reaching would also be compromised.</div>
+            </div>
+
+            <div class="q-card" data-correct="4">
+                <div class="q-num">Question 9</div>
+                <div class="q-stem">The deltoid muscle has three distinct heads. A patient can flex and medially rotate the arm but has difficulty with pure abduction in the 15–120 degree range. Which head is most likely affected?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Clavicular head</li>
+                    <li onclick="pick(this)">B. Spine head</li>
+                    <li onclick="pick(this)">C. All three heads equally</li>
+                    <li onclick="pick(this)" data-answer>D. Acromial head</li>
+                </ul>
+                <div class="q-explanation">The acromial (middle) head of the deltoid is the primary abductor from approximately 15 to 120 degrees. The clavicular (anterior) head performs flexion and medial rotation (both preserved here), and the spine (posterior) head performs extension and lateral rotation. The fiber orientation of the acromial head runs directly laterally from the acromion to the deltoid tuberosity, making it mechanically ideal for abduction.</div>
+            </div>
+
+            <div class="q-card" data-correct="2">
+                <div class="q-num">Question 10</div>
+                <div class="q-stem">A patient presents with inability to flex the forearm after a stab wound to the anterior arm. The brachialis is intact and functioning. Which structure was most likely damaged?</div>
+                <ul class="q-options">
+                    <li onclick="pick(this)">A. Radial nerve</li>
+                    <li onclick="pick(this)" data-answer>B. Musculocutaneous nerve proximal to the brachialis branch</li>
+                    <li onclick="pick(this)">C. Median nerve</li>
+                    <li onclick="pick(this)">D. Ulnar nerve</li>
+                </ul>
+                <div class="q-explanation">This is a trick question that tests understanding of innervation sequence. If the brachialis is still functioning, the musculocutaneous nerve is intact at least as far as the brachialis branch. But the question says the patient cannot flex — with an intact brachialis (the primary flexor), the patient should still be able to flex. The scenario implies loss of the biceps brachii contribution specifically. The musculocutaneous nerve innervates both, so if the brachialis works, the nerve was likely damaged proximal to the brachialis branch but the brachialis received a branch before the injury point. Clinically, loss of the biceps weakens flexion and significantly weakens supination.</div>
+            </div>
+
+            <button class="reset-btn" onclick="resetQuiz()">Reset All Questions</button>
+        </div>
     </div>
-</div>
 
-<footer>Aaron J. Hardgrave · East Tennessee State University · Quillen College of Medicine</footer>
+    <footer>Aaron J. Hardgrave &middot; East Tennessee State University &middot; Quillen College of Medicine</footer>
 
-<script>
-function showTab(id,btn){
-    document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
-    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-    document.getElementById('tab-'+id).classList.add('active');
-    btn.classList.add('active');
-    window.scrollTo(0,0);
-}
+    <script>
+        let answered = 0, correct = 0;
 
-const questions=[
-{q:"Following a motorcycle accident, a 30-year-old man presents with weakness in arm abduction at the shoulder and decreased sensation over the lateral aspect of his shoulder. Which nerve is likely affected?",
-opts:["Axillary n.","Lateral pectoral n.","Long thoracic n.","Suprascapular n.","Thoracodorsal n."],ans:0,
-exp:"The axillary nerve (C5, C6) innervates the deltoid (abduction) and teres minor, and provides sensory innervation to the lateral shoulder (regimental badge area)."},
+        function showTab(id, btn) {
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tab-' + id).classList.add('active');
+            btn.classList.add('active');
+            window.scrollTo(0, 0);
+        }
 
-{q:"A patient presents with limited shoulder abduction. A positive 'drop arm test' is noted. Which rotator cuff component is most likely injured?",
-opts:["Deltoid muscle","Infraspinatus tendon","Subscapularis tendon","Supraspinatus tendon","Teres major tendon","Teres minor tendon"],ans:3,
-exp:"The supraspinatus initiates abduction (first 15°). A positive drop arm test indicates inability to maintain abduction, characteristic of supraspinatus pathology."},
+        function pick(el) {
+            var card = el.closest('.q-card');
+            if (card.classList.contains('answered')) return;
+            card.classList.add('answered');
 
-{q:"Following shoulder dislocation reduction, a patient has pain over the superior greater tubercle, fails the empty can test, and MRI shows a torn tendon under the acromion. Which muscle attachment is damaged?",
-opts:["Coracobrachialis","Deltoid","Pectoralis minor","Supraspinatus","Teres major"],ans:3,
-exp:"The supraspinatus tendon courses under the acromion and inserts on the superior facet of the greater tubercle. The empty can test specifically evaluates the supraspinatus."},
+            var opts = card.querySelectorAll('.q-options li');
+            var isCorrect = el.hasAttribute('data-answer');
 
-{q:"A patient has paresthesia limited to the thumb and weakened elbow flexion. The cause is compression of:",
-opts:["Dorsal ramus of C6","Dorsal root of C6","Median n.","Middle trunk of brachial plexus","Musculocutaneous n.","Ventral ramus of C6"],ans:5,
-exp:"The ventral ramus of C6 carries both motor fibers (contributing to elbow flexion via musculocutaneous nerve) and sensory fibers to the thumb. A single ventral ramus lesion affects both at that level."},
+            opts.forEach(function(o) { o.classList.add('disabled'); });
 
-{q:"After a fall, imaging reveals transection of the subscapular artery near its origin from the axillary artery. The subscapularis retains adequate perfusion. Which artery provides collateral flow?",
-opts:["Axillary a.","Brachial a.","Lateral thoracic a.","Suprascapular a.","Thoraco-acromial trunk (deltoid branch)"],ans:3,
-exp:"The suprascapular artery (from the thyrocervical trunk) provides collateral flow via the scapular anastomosis when the subscapular artery is compromised."},
+            if (isCorrect) {
+                el.classList.add('selected-correct');
+                correct++;
+            } else {
+                el.classList.add('selected-wrong');
+                opts.forEach(function(o) {
+                    if (o.hasAttribute('data-answer')) o.classList.add('show-correct');
+                });
+            }
 
-{q:"A patient cannot medially rotate her arm and has anterior shoulder pain. Imaging reveals a rotator cuff tear. Which muscle is most likely torn?",
-opts:["Infraspinatus","Subscapularis","Supraspinatus","Teres minor"],ans:1,
-exp:"The subscapularis is the only rotator cuff muscle that medially rotates the arm. It inserts on the lesser tubercle."},
+            answered++;
+            card.querySelector('.q-explanation').classList.add('visible');
+            document.getElementById('score-display').textContent = correct + ' / ' + 10;
+        }
 
-{q:"A linebacker falls on the point of his shoulder. There is a visible 'step-off' deformity with superior clavicular displacement. Which ligaments are completely torn?",
-opts:["AC ligament only","Coracoclavicular ligaments only","Both AC and coracoclavicular ligaments","Glenohumeral ligaments","Coracoacromial ligament"],ans:2,
-exp:"A Grade III shoulder separation involves complete tears of both the AC and coracoclavicular (conoid + trapezoid) ligaments, producing superior clavicular displacement and step-off deformity."},
-
-{q:"A pitcher has deep shoulder pain and catching during throwing. Arthroscopy reveals damage to the superior labrum at the biceps tendon attachment. This injury is:",
-opts:["Bankart lesion","Hill-Sachs lesion","Rotator cuff tear","SLAP tear","Shoulder separation"],ans:3,
-exp:"A SLAP (Superior Labrum Anterior to Posterior) tear involves the superior labrum at the biceps anchor. Common in overhead athletes with deep pain and mechanical catching."},
-
-{q:"A humeral shaft fracture at the radial groove causes inability to extend the wrist. Which nerve is injured, and from which cord does it arise?",
-opts:["Axillary n.; posterior cord","Musculocutaneous n.; lateral cord","Radial n.; posterior cord","Radial n.; lateral cord","Ulnar n.; medial cord"],ans:2,
-exp:"The radial nerve arises from the posterior cord and travels in the radial groove. Fractures here cause loss of wrist/finger extension (wrist drop)."},
-
-{q:"The musculocutaneous nerve pierces a muscle before reaching its targets. Which muscle?",
-opts:["Biceps brachii","Brachialis","Coracobrachialis","Pectoralis minor","Subscapularis"],ans:2,
-exp:"The musculocutaneous nerve pierces the coracobrachialis before innervating biceps brachii and brachialis, terminating as the lateral cutaneous nerve of the forearm."}
-];
-
-let score=0,answered=new Set();
-
-function buildQuiz(){
-    const c=document.getElementById('quiz-container');
-    c.innerHTML='';
-    questions.forEach((q,i)=>{
-        let h=`<div class="q-card" id="q${i}"><h4><span class="q-num">${i+1}.</span> ${q.q}</h4>`;
-        q.opts.forEach((o,j)=>{h+=`<button class="opt-btn" onclick="checkAnswer(${i},${j},this)">${String.fromCharCode(65+j)}. ${o}</button>`;});
-        h+=`<div class="explanation" id="exp${i}">${q.exp}</div></div>`;
-        c.innerHTML+=h;
-    });
-}
-
-function checkAnswer(qi,oi,btn){
-    if(answered.has(qi))return;
-    answered.add(qi);
-    const card=document.getElementById('q'+qi);
-    const btns=card.querySelectorAll('.opt-btn');
-    if(oi===questions[qi].ans){score++;btn.classList.add('correct');}
-    else{btn.classList.add('wrong');btns[questions[qi].ans].classList.add('correct');}
-    btns.forEach((b,j)=>{if(j!==oi&&j!==questions[qi].ans)b.classList.add('reveal');b.style.cursor='default';});
-    document.getElementById('exp'+qi).classList.add('show');
-    document.getElementById('score').textContent=score;
-}
-
-function resetQuiz(){score=0;answered.clear();document.getElementById('score').textContent=0;buildQuiz();}
-buildQuiz();
-</script>
+        function resetQuiz() {
+            answered = 0; correct = 0;
+            document.getElementById('score-display').textContent = '0 / 10';
+            document.querySelectorAll('.q-card').forEach(function(card) {
+                card.classList.remove('answered');
+                card.querySelectorAll('.q-options li').forEach(function(o) {
+                    o.classList.remove('disabled', 'selected-correct', 'selected-wrong', 'show-correct');
+                });
+                card.querySelector('.q-explanation').classList.remove('visible');
+            });
+            window.scrollTo(0, 0);
+        }
+    </script>
 </body>
 </html>
